@@ -1,0 +1,88 @@
+Config {
+
+   -- appearance
+     font =            "xft:DejaVu Sans:size=8:antialias=true"
+   , bgColor =         "black"
+   , fgColor =         "#87cefa"
+   , border =          NoBorder
+   , borderColor =     "#ffffff"
+   , position =        Top
+   , alpha =           0
+
+   -- layout
+   , sepChar =  "%"   -- delineator between plugin names and straight text
+   , alignSep = "}{"  -- separator between left-right alignment
+   , template = "%battery% | %dynnetwork% | %wlan0wi% }{ Vol: %default:Master% | %date%"
+
+   -- general behavior
+   , lowerOnStart =     True    -- send to bottom of window stack on start
+   , hideOnStart =      False   -- start with window unmapped (hidden)
+   , allDesktops =      True    -- show on all desktops
+   , overrideRedirect = True    -- set the Override Redirect flag (Xlib)
+   , pickBroadest =     False   -- choose widest display (multi-monitor)
+   , persistent =       True    -- enable/disable hiding (True = disabled)
+
+   -- plugins
+   --   Numbers can be automatically colored according to their value. xmobar
+   --   decides color based on a three-tier/two-cutoff system, controlled by
+   --   command options:
+   --     --Low sets the low cutoff
+   --     --High sets the high cutoff
+   --
+   --     --low sets the color below --Low cutoff
+   --     --normal sets the color between --Low and --High cutoffs
+   --     --High sets the color above --High cutoff
+   --
+   --   The --template option controls how the plugin is displayed. Text
+   --   color can be set by enclosing in <fc></fc> tags. For more details
+   --   see http://projects.haskell.org/xmobar/#system-monitor-plugins.
+   , commands = 
+        [
+        -- battery monitor
+         Run Battery        [ "--template" , "Batt: <acstatus>"
+                             , "--Low"      , "30"        -- units: %
+                             , "--High"     , "80"        -- units: %
+                             , "--low"      , "red"
+                             , "--normal"   , "darkgreen"
+                             , "--high"     , "blue"
+
+                             , "--" -- battery specific options
+                                       -- discharging status
+                                       , "-o"	, "<left>% (<timeleft>)"
+                                       -- AC "on" status
+                                       , "-O"	, "<fc=#dAA520>Charging</fc>"
+                                       -- charged status
+                                       , "-i"	, "FULL"
+                             ] 300
+
+        -- network activity monitor (dynamic interface resolution)
+        , Run DynNetwork     [ "--template" , "tx:<tx> rx:<rx>"
+                             , "--Low"      , "10000"       -- units: B/s
+                             , "--High"     , "1000000"      -- units: B/s
+                             , "--low"      , "blue"
+                             , "--normal"   , "darkgreen"
+                             , "--high"     , "red"
+                             ] 100
+
+        -- wifi status indicator
+        , Run Wireless "wlan0"
+                             [ "--template" , "'<essid>': <quality> <qualityvbar>"
+                             , "--Low"      , "20"
+                             , "--High"     , "80"
+                             , "--low"      , "red"
+                             , "--normal"   , "darkgreen"
+                             , "--high"     , "blue"
+                             ] 100
+
+
+        -- volume indicator
+        , Run Volume "default" "Master" 
+                             [
+                               "--template" , "<volume>%<volumebar>"
+                             ] 5
+
+        -- time and date indicator 
+        , Run Date           "<fc=#ABABAB>%T</fc>" "date" 10
+
+        ]
+   }

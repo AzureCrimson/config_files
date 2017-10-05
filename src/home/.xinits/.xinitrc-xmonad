@@ -1,0 +1,5 @@
+feh --bg-scale "/home/azurecrimson/Pictures/SciFi Backgrounds/planets-sci-fi-43852.jpg" &
+xmobar &
+xbacklight -set 1
+
+exec ck-launch-session dbus-launch --sh-syntax --exit-with-session xmonad

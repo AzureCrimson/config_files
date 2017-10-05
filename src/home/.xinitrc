@@ -1,0 +1,1 @@
+.xinits/.xinitrc-xmonad
